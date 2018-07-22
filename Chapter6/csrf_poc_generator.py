@@ -1,31 +1,11 @@
 #!/usr/bin/env python3
+import sys
+import ast
+
 from bs4 import BeautifulSoup, Tag
 
-def generate_poc():
-    method="POST"
-    encoding_type="application/x-www-form-urlencoded"
-    action="http://webscantest.com/crosstraining/aboutyou.php"
-    fields = [
-        {
-            "type":"text",
-            "name":"fname",
-            "label":"fname",
-            "value":"William"
-        },
-        {
-            "type":"text",
-            "name":"lname",
-            "label":"lname",
-            "value":"Mandella"
-        },
-        {
-            "type":"text",
-            "name":"nick",
-            "label":"nick",
-            "value":"Major Mandella"
-        }
-    ]
-
+def generate_poc(method, encoding_type, action, fields):
+    """ Generate a CSRF PoC using basic form data """
     content = BeautifulSoup("<html></html>", "html.parser")
     html_tag = content.find("html")
     form_tag = content.new_tag("form", action=action, method=method, enctype=encoding_type)
@@ -45,4 +25,8 @@ def generate_poc():
     return content.prettify()
 
 if __name__ == "__main__":
-    print(generate_poc())
+    method=sys.argv[1]
+    encoding_type=sys.argv[2]
+    action=sys.argv[3]
+    fields = ast.literal_eval(sys.argv[4])
+    print(generate_poc(method, encoding_type, action, fields))
